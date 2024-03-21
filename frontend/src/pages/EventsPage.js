@@ -1,19 +1,20 @@
-import { Link } from "react-router-dom";
-export default function EventsPage() {
-  const DUMMY_EVENTS = [
-    { id: "e1", title: "Tea" },
-    { id: "e2", title: "Coffee" },
-  ];
-  return (
-    <>
-      <h1>EventsPage</h1>
-      <ul>
-        {DUMMY_EVENTS.map((e) => (
-          <li key={e.id}>
-            <Link to={e.id}>{e.title}</Link>
-          </li>
-        ))}
-      </ul>
-    </>
-  );
+import { json, useLoaderData } from "react-router-dom";
+import EventsList from "../components/EventsList";
+
+function EventsPage() {
+  const events = useLoaderData();
+  return <EventsList events={events} />;
 }
+
+export default EventsPage;
+
+export const loader = async () => {
+  const response = await fetch("http://localhost:8080/eventssss");
+  console.log(response.ok);
+  if (!response.ok) {
+    throw json({ message: "not an ok response" }, { status: 500 });
+  } else {
+    const resData = await response.json();
+    return resData.events;
+  }
+};
